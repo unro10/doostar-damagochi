@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뚜스터 키우기</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="game">
+
+    <h1>🐹 뚜스터 키우기</h1>
+
+    <img id="hamster" src="images/normal.png">
+
+    <div class="stats">
+
+        <p>🍖 배고픔 : <span id="hunger">100</span></p>
+
+        <p>🎈 행복 : <span id="happy">100</span></p>
+
+        <p>🛁 청결 : <span id="clean">100</span></p>
+
+    </div>
+
+    <div class="buttons">
+
+        <button onclick="feed()">먹이주기</button>
+
+        <button onclick="play()">놀아주기</button>
+
+        <button onclick="wash()">씻기</button>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
