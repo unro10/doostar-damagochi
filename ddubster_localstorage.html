@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>뚜별햄스터 키우기 🐹</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@300;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ===== 일러스트 이미지 교체 안내 =====
+   아래 IMAGE_SLOTS 객체(JS 하단)에 일러스트 URL을 입력하세요.
+   슬롯이 비어 있으면 기본 SVG 캐릭터로 자동 대체됩니다.
+   ===================================== */
+
+:root {
+  --pink:    #FF6B9D;
+  --pink-lt: #FFE0EE;
+  --pink-dk: #C2185B;
+  --mint:    #4ECDC4;
+  --mint-lt: #DFFAF8;
+  --yellow:  #FFD93D;
+  --orange:  #FF8C42;
+  --purple:  #A78BFA;
+  --bg:      #FFF5F9;
+  --device:  #FFFFFF;
+  --text:    #2D1B33;
+  --muted:   #9E7BA8;
+  --border:  rgba(255,107,157,0.18);
+  --shadow:  0 8px 32px rgba(194,24,91,0.10);
+  --r:       20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background-image: radial-gradient(circle at 20% 30%, rgba(255,107,157,0.12) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(78,205,196,0.10) 0%, transparent 50%);
+}
+
+/* ── 메인 레이아웃 ── */
+.container {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; padding: 24px 16px; width: 100%; max-width: 420px;
+}
+
+.title-wrap { text-align: center; }
+.title-main {
+  font-family: 'Gmarket Sans', sans-serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--text);
+  letter-spacing: -1px;
+}
+.title-main span { color: var(--pink); }
+.title-sub {
+  font-size: 12px; color: var(--muted); margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* ── 디바이스 ── */
+.device {
+  background: var(--device);
+  border-radius: 36px;
+  border: 2px solid var(--pink-lt);
+  padding: 22px 20px;
+  width: 100%;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
+}
+.device::before {
+  content: '';
+  position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 6px; background: var(--pink);
+  border-radius: 0 0 8px 8px;
+}
+
+/* ── 상단 정보바 ── */
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.top-badge {
+  background: var(--pink-lt); color: var(--pink-dk);
+  font-size: 11px; font-weight: 700; font-family: 'Gmarket Sans', sans-serif;
+  padding: 3px 10px; border-radius: 20px;
+}
+.top-score {
+  font-size: 12px; color: var(--muted);
+}
+.top-score b { color: var(--pink); font-weight: 700; }
+.top-clock {
+  font-size: 12px; color: var(--muted);
+  font-family: 'Gmarket Sans', sans-serif;
+}
+
+/* ── 스탯 바 ── */
+.stats { display: flex; flex-direction: column; gap: 7px; }
+.stat-row { display: flex; align-items: center; gap: 8px; }
+.stat-icon { font-size: 14px; width: 18px; text-align: center; }
+.stat-track {
+  flex: 1; height: 9px;
+  background: #F3E8F5; border-radius: 5px; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.stat-fill {
+  height: 100%; border-radius: 5px;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.fill-hunger { background: linear-gradient(90deg, #FF8C42, #FFD93D); }
+.fill-happy  { background: linear-gradient(90deg, #FF6B9D, #A78BFA); }
+.fill-energy { background: linear-gradient(90deg, #4ECDC4, #A78BFA); }
+.fill-clean  { background: linear-gradient(90deg, #4ECDC4, #FFD93D); }
+.stat-val {
+  font-size: 11px; color: var(--muted);
+  font-family: 'Gmarket Sans', sans-serif;
+  min-width: 26px; text-align: right;
+}
+
+/* ── 스크린 ── */
+.screen {
+  background: var(--pink-lt);
+  border-radius: 24px;
+  border: 1.5px solid rgba(255,107,157,0.25);
+  min-height: 210px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  position: relative; overflow: hidden;
+  padding: 16px 12px;
+}
+.screen-bg {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.screen-bg::before {
+  content: ''; position: absolute;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  bottom: -60px; right: -40px;
+}
+.screen-bg::after {
+  content: ''; position: absolute;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  top: -30px; left: -20px;
+}
+
+.lights-off {
+  position: absolute; inset: 0; border-radius: 24px;
+  background: rgba(30,10,50,0.72);
+  display: none; align-items: center; justify-content: center;
+  font-size: 36px; z-index: 10;
+  backdrop-filter: blur(2px);
+}
+.sick-tint {
+  position: absolute; inset: 0; border-radius: 24px;
+  background: rgba(255,100,100,0.10); pointer-events: none;
+  display: none; z-index: 2;
+}
+
+/* ── 펫 스프라이트 ── */
+.pet-wrap {
+  width: 130px; height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 3;
+}
+.pet-wrap img {
+  width: 100%; height: 100%; object-fit: contain;
+  display: none;
+}
+.pet-wrap svg { width: 100%; height: 100%; }
+
+/* 흔들리기 애니메이션 */
+@keyframes wobble {
+  0%,100%{transform:rotate(0deg);}
+  20%{transform:rotate(-8deg);}
+  40%{transform:rotate(8deg);}
+  60%{transform:rotate(-5deg);}
+  80%{transform:rotate(5deg);}
+}
+@keyframes bounce {
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0);}
+  20%,60%{transform:translateX(-5px);}
+  40%,80%{transform:translateX(5px);}
+}
+.anim-eat   { animation: wobble 0.6s ease; }
+.anim-play  { animation: bounce 0.5s ease 2; }
+.anim-sick  { animation: shake 0.5s ease; }
+
+/* ── 말풍선 ── */
+.bubble-wrap { position: relative; z-index: 3; width: 90%; }
+.bubble {
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid rgba(255,107,157,0.3);
+  padding: 7px 14px;
+  font-size: 13px; color: var(--text); text-align: center;
+  font-family: 'Gmarket Sans', sans-serif;
+  min-height: 32px; line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(255,107,157,0.08);
+}
+.bubble::before {
+  content: '';
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border: 5px solid transparent;
+  border-bottom-color: rgba(255,107,157,0.3);
+}
+.bubble::after {
+  content: '';
+  position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border: 4px solid transparent;
+  border-bottom-color: #fff;
+}
+
+/* ── 알림 ── */
+.notif {
+  position: absolute; top: 0; left: 0; right: 0;
+  background: var(--yellow);
+  color: #7A5200;
+  font-size: 12px; font-weight: 700;
+  font-family: 'Gmarket Sans', sans-serif;
+  text-align: center; padding: 6px 10px;
+  border-radius: 24px 24px 0 0;
+  transform: translateY(-100%);
+  transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  z-index: 20;
+}
+.notif.show { transform: translateY(0); }
+
+/* 💩 */
+.poop-btn {
+  position: absolute; bottom: 10px; left: 12px;
+  font-size: 22px; cursor: pointer; z-index: 5;
+  display: none;
+  animation: bounce 1s ease infinite;
+}
+
+/* ── 버튼 그리드 ── */
+.btns {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px;
+}
+.btn {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 6px;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--muted);
+  font-family: 'Gmarket Sans', sans-serif; font-weight: 500;
+  transition: all 0.18s;
+  box-shadow: 0 2px 6px rgba(255,107,157,0.06);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,107,157,0.15); }
+.btn:active { transform: scale(0.95) translateY(0); }
+.btn .btn-icon {
+  width: 36px; height: 36px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.btn-feed  .btn-icon { background: #FFF0E0; }
+.btn-play  .btn-icon { background: #E8FFE0; }
+.btn-sleep .btn-icon { background: #E0EEFF; }
+.btn-bath  .btn-icon { background: var(--mint-lt); }
+.btn-medi  .btn-icon { background: #FFE0EE; }
+.btn-clean .btn-icon { background: #F0EEFF; }
+
+/* ── 하단 정보 ── */
+.footer-info {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted);
+}
+
+/* ── 이미지 가이드 박스 ── */
+.guide {
+  background: #fff;
+  border: 1.5px dashed rgba(255,107,157,0.3);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  width: 100%;
+  font-size: 12px; color: var(--muted); line-height: 1.8;
+}
+.guide b { color: var(--pink-dk); font-weight: 700; }
+.guide code {
+  background: var(--pink-lt); color: var(--pink-dk);
+  padding: 1px 6px; border-radius: 5px;
+  font-size: 11px; font-family: monospace;
+}
+
+/* ── 스크롤 크기 대응 ── */
+@media (max-height: 740px) {
+  .screen { min-height: 170px; }
+  .pet-wrap { width: 110px; height: 110px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title-wrap">
+    <div class="title-main"><span>뚜별</span>햄스터 키우기</div>
+    <div class="title-sub">✦ 뚜스터를 돌봐줘요 ✦</div>
+  </div>
+
+  <div class="device">
+    <!-- 상단 정보 -->
+    <div class="top-bar">
+      <div class="top-badge" id="phase-badge">아기 🥚</div>
+      <div class="top-score">점수 <b id="score">0</b></div>
+      <div class="top-clock" id="clock">--:--</div>
+    </div>
+
+    <!-- 스탯 -->
+    <div class="stats">
+      <div class="stat-row">
+        <span class="stat-icon">🍚</span>
+        <div class="stat-track"><div class="stat-fill fill-hunger" id="bar-hunger" style="width:70%"></div></div>
+        <span class="stat-val" id="val-hunger">70</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-icon">💜</span>
+        <div class="stat-track"><div class="stat-fill fill-happy" id="bar-happy" style="width:80%"></div></div>
+        <span class="stat-val" id="val-happy">80</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-icon">⚡</span>
+        <div class="stat-track"><div class="stat-fill fill-energy" id="bar-energy" style="width:90%"></div></div>
+        <span class="stat-val" id="val-energy">90</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-icon">🛁</span>
+        <div class="stat-track"><div class="stat-fill fill-clean" id="bar-clean" style="width:85%"></div></div>
+        <span class="stat-val" id="val-clean">85</span>
+      </div>
+    </div>
+
+    <!-- 스크린 -->
+    <div class="screen" id="screen">
+      <div class="notif" id="notif"></div>
+      <div class="screen-bg"></div>
+      <div class="sick-tint" id="sick-tint"></div>
+      <div class="lights-off" id="lights">🌙</div>
+      <div class="poop-btn" id="poop" title="청소하기" onclick="action('clean')">💩</div>
+
+      <!-- 펫 스프라이트 -->
+      <div class="pet-wrap" id="pet-wrap">
+        <!-- 일러스트 이미지 태그 (IMAGE_SLOTS에 URL 입력 시 자동 표시) -->
+        <img id="pet-img" src="" alt="뚜별 햄스터"/>
+        <!-- 기본 SVG (이미지 없을 때 표시) -->
+        <svg id="pet-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <!-- 말풍선 -->
+      <div class="bubble-wrap">
+        <div class="bubble" id="speech">안녕! 나는 뚜스터야 🌸</div>
+      </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="btns">
+      <button class="btn btn-feed" onclick="action('feed')">
+        <div class="btn-icon">🍚</div>밥 주기
+      </button>
+      <button class="btn btn-play" onclick="action('play')">
+        <div class="btn-icon">🎉</div>놀기
+      </button>
+      <button class="btn btn-sleep" onclick="action('sleep')">
+        <div class="btn-icon">💤</div>수면
+      </button>
+      <button class="btn btn-bath" onclick="action('bath')">
+        <div class="btn-icon">🛁</div>목욕
+      </button>
+      <button class="btn btn-medi" onclick="action('medicine')">
+        <div class="btn-icon">💊</div>약 주기
+      </button>
+      <button class="btn btn-clean" onclick="action('clean')">
+        <div class="btn-icon">✨</div>청소
+      </button>
+    </div>
+
+    <!-- 하단 -->
+    <div class="footer-info">
+      <span id="age-display">0일차</span>
+      <span>⭐ 행복 <b id="total-happy">0</b></span>
+    </div>
+  </div>
+
+  </div>
+
+<script>
+const IMAGE_SLOTS = {
+  normal : "images/normal.png",
+  hungry : "images/hungry.png",
+  sad    : "images/sad.png",
+  dirty  : "images/dirty.png"
+};
+
+/* ── 성장 단계 ── */
+const PHASES     = ['아기 🥚', '어린이 🐣', '청소년 🐹', '어른 ⭐'];
+const PHASE_DAYS = [0, 3, 7, 14];  // 각 단계 도달 일수
+
+/* ── 대사 ── */
+const MSGS = {
+  hungry: ['배고파요 ㅠㅠ 밥 주세요!', '꼬르륵... 뚜별 밥 좀요~', '밥... 밥이요...🍚'],
+  happy:  ['오늘 기분 최고야! 🌸', '행복해~ 뚜뚜뚜~', '뚜별 팬이 최고야 💜', '오늘도 즐거워!'],
+  sad:    ['심심해요... 놀아주세요 😢', '우울해... 뚜뚜', '나 슬픔 ㅠ'],
+  tired:  ['너무 졸려요 😴', '피곤해... 재워줘요', 'Zzz... 눈이 감겨...'],
+  dirty:  ['몸이 좀 더럽네요 😣', '목욕하고 싶어요!', '간질간질해...'],
+  sick:   ['으으 몸이 아파요 💊', '약 주세요 아프다고요', '열이 나요...'],
+  normal: ['오늘도 뚜뚜~ 🌟', '뚜스터 건강해요!', '뚜별이 보고 싶다~', '낮잠 자고 싶다 ☁️',
+           '햄버거 먹고 싶어 🍔', '오늘 날씨 좋다~', '뚜뚜뚜뚜~'],
+};
+
+/* ── 게임 상태 ── */
+let G = {
+  hunger: 70, happy: 80, energy: 90, clean: 85,
+  age: 0, phase: 0, score: 0, totalHappy: 0,
+  isSick: false, poopCount: 0,
+  isSleeping: false, tick: 0,
+  curAnim: null,
+};
+
+/* ── 유틸 ── */
+const clamp = (v, min=0, max=100) => Math.min(max, Math.max(min, v));
+const pick  = arr => arr[Math.floor(Math.random() * arr.length)];
+const $     = id => document.getElementById(id);
+
+/* ── SVG 캐릭터 드로잉 ── */
+function drawSVG(mood) {
+  const palettes = {
+    normal: { body:'#FFCCE7', inner:'#FFE5F2', ear:'#FF9DC5', cheek:'#FF6B9D', eye:'#2D1B33' },
+    sad:    { body:'#C9C5D3', inner:'#EDE9F2', ear:'#A99FBB', cheek:'#9B8DAA', eye:'#3D3550' },
+    sick:   { body:'#BCEBB0', inner:'#E8FAE4', ear:'#8DD883', cheek:'#5DBF50', eye:'#1A4D16' },
+    sleep:  { body:'#B0CCFF', inner:'#DCE9FF', ear:'#7AABFF', cheek:'#4D8EFF', eye:'#0A2B7A' },
+    eat:    { body:'#FFE08A', inner:'#FFF5C4', ear:'#FFCA28', cheek:'#FFA000', eye:'#4A2C00' },
+  };
+  const c = palettes[mood] || palettes.normal;
+  const eyeLeft  = mood==='sleep'
+    ? `<path d="M43 50 Q48 46 53 50" stroke="${c.eye}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+    : `<circle cx="48" cy="50" r="5" fill="${c.eye}"/><circle cx="49.5" cy="48.5" r="1.8" fill="white"/>`;
+  const eyeRight = mood==='sleep'
+    ? `<path d="M67 50 Q72 46 77 50" stroke="${c.eye}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+    : `<circle cx="72" cy="50" r="5" fill="${c.eye}"/><circle cx="73.5" cy="48.5" r="1.8" fill="white"/>`;
+  const mouth = mood==='sad' || mood==='sick'
+    ? `<path d="M55 64 Q60 60 65 64" stroke="${c.cheek}" stroke-width="2" fill="none" stroke-linecap="round"/>`
+    : `<path d="M55 62 Q60 68 65 62" stroke="${c.cheek}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const puffLeft  = mood==='eat'
+    ? `<ellipse cx="38" cy="68" rx="13" ry="9" fill="${c.ear}" opacity="0.6"/>` : '';
+  const puffRight = mood==='eat'
+    ? `<ellipse cx="82" cy="68" rx="13" ry="9" fill="${c.ear}" opacity="0.6"/>` : '';
+  const sickDot   = mood==='sick'
+    ? `<circle cx="60" cy="38" r="4" fill="#FF6B9D" opacity="0.7"/><text x="60" y="29" text-anchor="middle" font-size="14">💦</text>` : '';
+
+  $('pet-svg').innerHTML = `
+    <!-- 귀 -->
+    <ellipse cx="30" cy="38" rx="18" ry="22" fill="${c.ear}"/>
+    <ellipse cx="90" cy="38" rx="18" ry="22" fill="${c.ear}"/>
+    <ellipse cx="30" cy="40" rx="11" ry="14" fill="${c.inner}" opacity="0.8"/>
+    <ellipse cx="90" cy="40" rx="11" ry="14" fill="${c.inner}" opacity="0.8"/>
+    <!-- 몸통 -->
+    <ellipse cx="60" cy="75" rx="42" ry="35" fill="${c.body}"/>
+    <!-- 얼굴 -->
+    <ellipse cx="60" cy="56" rx="34" ry="36" fill="${c.inner}"/>
+    <!-- 볼터치 -->
+    <ellipse cx="40" cy="62" rx="10" ry="7" fill="${c.cheek}" opacity="0.35"/>
+    <ellipse cx="80" cy="62" rx="10" ry="7" fill="${c.cheek}" opacity="0.35"/>
+    <!-- 눈 -->
+    ${eyeLeft}${eyeRight}
+    <!-- 코 -->
+    <ellipse cx="60" cy="58" rx="4" ry="3" fill="${c.cheek}" opacity="0.8"/>
+    <!-- 입 -->
+    ${mouth}
+    <!-- 볼살 (식사) -->
+    ${puffLeft}${puffRight}
+    <!-- 아픔 표시 -->
+    ${sickDot}
+  `;
+}
+
+/* ── 현재 기분 → SVG 모드 ── */
+function getMood() {
+  if (G.isSleeping) return 'sleep';
+  if (G.isSick)     return 'sick';
+  if (G.hunger < 20 || G.happy < 20) return 'sad';
+  if (G.hunger > 60 && G.happy > 65) return 'normal';
+  return 'sad';
+}
+
+/* ── 이미지 슬롯 키 결정 ── */
+function getImageKey() {
+  if (G.clean < 25) return "dirty";
+  if (G.hunger < 25) return "hungry";
+  if (G.happy < 25) return "sad";
+  return "normal";
+}
+
+/* ── 스프라이트 업데이트 ── */
+function updateSprite() {
+
+  const key = getImageKey();
+  const url = IMAGE_SLOTS[key];
+
+  const img = $('pet-img');
+  const svg = $('pet-svg');
+  const wrap = $('pet-wrap');
+
+  const sizes = [80,110,140,170];
+
+  wrap.style.width = sizes[G.phase] + "px";
+  wrap.style.height = sizes[G.phase] + "px";
+
+  if(url){
+    img.src = url;
+    img.style.display = 'block';
+    svg.style.display = 'none';
+  }else{
+    img.style.display = 'none';
+    svg.style.display = 'block';
+  }
+}
+
+/* ── 애니메이션 ── */
+function playAnim(type) {
+  const el = $('pet-wrap');
+  if (G.curAnim) { el.classList.remove(G.curAnim); void el.offsetWidth; }
+  el.classList.add('anim-' + type);
+  G.curAnim = 'anim-' + type;
+  setTimeout(() => { el.classList.remove('anim-' + type); G.curAnim = null; }, 800);
+}
+
+/* ── 대사 ── */
+function getMsg() {
+  if (G.isSick)        return pick(MSGS.sick);
+  if (G.isSleeping)    return 'Zzz... 💤';
+  if (G.hunger < 20)   return pick(MSGS.hungry);
+  if (G.happy  < 20)   return pick(MSGS.sad);
+  if (G.energy < 20)   return pick(MSGS.tired);
+  if (G.clean  < 20)   return pick(MSGS.dirty);
+  return pick(MSGS.normal);
+}
+
+/* ── 알림 토스트 ── */
+function showNotif(msg) {
+  const el = $('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(showNotif._t);
+  showNotif._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+/* ── 전체 UI 업데이트 ── */
+function updateUI() {
+  ['hunger','happy','energy','clean'].forEach(k => {
+    $('bar-' + k).style.width = G[k] + '%';
+    $('val-' + k).textContent = Math.round(G[k]);
+  });
+  $('phase-badge').textContent = PHASES[G.phase];
+  $('age-display').textContent = G.age + '일차';
+  $('score').textContent = G.score;
+  $('total-happy').textContent = G.totalHappy;
+  $('speech').textContent = getMsg();
+  $('sick-tint').style.display   = G.isSick ? 'block' : 'none';
+  $('poop').style.display        = G.poopCount > 0 ? 'block' : 'none';
+  $('lights').style.display      = G.isSleeping ? 'flex' : 'none';
+  updateSprite();
+}
+
+/* ── 클록 ── */
+function updateClock() {
+  const n = new Date();
+  $('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+
+/* ── 버튼 액션 ── */
+function action(type) {
+  if (G.isSleeping && type !== 'sleep') {
+    showNotif('지금 자고 있어요! 먼저 깨워주세요 💤');
+    return;
+  }
+  switch (type) {
+    case 'feed':
+      if (G.hunger >= 95) { showNotif('배가 불러요~ 나중에 주세요 🍚'); return; }
+      G.hunger = clamp(G.hunger + 22);
+      G.happy  = clamp(G.happy  + 5);
+      G.score += 10;
+      playAnim('eat');
+      updateSprite('eat');
+      setTimeout(() => updateSprite(), 900);
+      showNotif('냠냠 맛있다! 🍚');
+      break;
+
+    case 'play':
+      if (G.energy < 15) { showNotif('너무 피곤해서 못 놀아요 😴'); return; }
+      G.happy  = clamp(G.happy  + 22);
+      G.energy = clamp(G.energy - 12);
+      G.hunger = clamp(G.hunger - 8);
+      G.score += 15;
+      G.totalHappy++;
+      playAnim('play');
+      showNotif('냐하하 신난다! 🎉');
+      break;
+
+    case 'sleep':
+      G.isSleeping = !G.isSleeping;
+      showNotif(G.isSleeping ? '꿈나라로~ 좋은 꿈 꿔요 💤' : '잘 잤어요! 개운해~ ☀️');
+      break;
+
+    case 'bath':
+      G.clean = clamp(G.clean + 35);
+      G.happy = clamp(G.happy + 8);
+      G.score += 8;
+      showNotif('깨끗해졌어요! 뽀득뽀득 🛁');
+      break;
+
+    case 'medicine':
+      if (!G.isSick) { showNotif('지금은 건강해요! 약 안 먹어도 돼요 💊'); return; }
+      G.isSick  = false;
+      G.energy  = clamp(G.energy + 25);
+      G.score  += 20;
+      playAnim('play');
+      showNotif('나았어요! 다시 건강해졌어요 💊');
+      break;
+
+    case 'clean':
+      if (G.poopCount === 0) { showNotif('이미 깨끗해요! ✨'); return; }
+      G.poopCount = 0;
+      G.clean = clamp(G.clean + 15);
+      G.score += 5;
+      showNotif('청소 완료! 향긋해요 ✨');
+      break;
+  }
+  updateUI();
+  saveGame();
+}
+
+/* ── 게임 틱 (2초마다) ── */
+function tick() {
+  G.tick++;
+
+  if (G.isSleeping) {
+    G.energy = clamp(G.energy + 2.5);
+    G.hunger = clamp(G.hunger - 0.4);
+  } else {
+    G.hunger = clamp(G.hunger - 1.4);
+    G.happy  = clamp(G.happy  - 0.9);
+    G.energy = clamp(G.energy - 0.7);
+    G.clean  = clamp(G.clean  - 0.5);
+  }
+
+  // 💩 생성 (40틱 = 80초마다)
+  if (G.tick % 40 === 0) {
+    G.poopCount = Math.min(3, G.poopCount + 1);
+    G.clean = clamp(G.clean - 12);
+  }
+
+  // 나이 증가 (60틱 = 2분마다 1일)
+  if (G.tick % 60 === 0) {
+    G.age++;
+    G.score += 5;
+  }
+
+  // 질병 발생
+  if (!G.isSick && (G.hunger < 10 || G.clean < 5)) {
+    if (Math.random() < 0.12) {
+      G.isSick = true;
+      showNotif('뚜스터가 아파요! 빨리 약을 주세요 🤒');
+      playAnim('sick');
+    }
+  }
+
+  // 성장 단계 계산
+  const newPhase = Math.min(3, PHASE_DAYS.filter(d => G.age >= d).length - 1);
+  if (newPhase > G.phase) {
+    G.phase = newPhase;
+    showNotif(`성장했어요! ${PHASES[G.phase]}(으)로 진화! 🎉`);
+  }
+
+  // 행복 누적
+  if (!G.isSick && !G.isSleeping && G.hunger > 50 && G.happy > 50) {
+    G.totalHappy++;
+  }
+
+  updateUI();
+  saveGame();
+}
+
+
+/* ── 저장/불러오기 ── */
+function saveGame() {
+  localStorage.setItem('ddubster_save', JSON.stringify(G));
+}
+
+function loadGame() {
+  const data = localStorage.getItem('ddubster_save');
+  if (!data) return;
+
+  try {
+    const save = JSON.parse(data);
+    G = {...G, ...save};
+  } catch(e) {
+    console.error('저장 데이터 로드 실패', e);
+  }
+}
+
+
+/* ── 초기화 & 루프 시작 ── */
+loadGame();
+updateUI();
+updateClock();
+setInterval(tick, 2000);
+setInterval(updateClock, 15000);
+</script>
+</body>
+</html>
